@@ -1,25 +1,15 @@
-import { Pool } from 'pg'
+import { neon } from '@neondatabase/serverless'
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
-})
+const sql = neon(process.env.DATABASE_URL!)
 
 export default defineEventHandler(async (event) => {
   try {
-    // 获取数据库连接
-    const client = await pool.connect()
+    // 执行查询
+    const result = await sql`SELECT * FROM users limit 10`
     
-    try {
-      // 执行查询
-      const result = await client.query('SELECT * FROM users limit 10')
-      
-      return {
-        status: 200,
-        data: result.rows
-      }
-    } finally {
-      // 释放连接回连接池
-      client.release()
+    return {
+      status: 200,
+      data: result
     }
   } catch (error: any) {
     // 错误处理
