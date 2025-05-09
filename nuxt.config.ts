@@ -1,13 +1,6 @@
 export default defineNuxtConfig({
   nitro: {
-    preset: 'cloudflare-pages',
-    cloudflare: {
-      pages: {
-        routes: {
-          include: ["nodejs_compat"]
-        }
-      }
-    }
+    preset: 'cloudflare-pages'
   },
   runtimeConfig: {
     public: {
