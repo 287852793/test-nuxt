@@ -32,7 +32,7 @@ const d1Loading = ref(false)
 const fetchD1Data = async () => {
   d1Loading.value = true
   try {
-    const response = await fetch('/api/d1-test')
+    const response = await fetch('/api/testd1')
     const result = await response.json()
     if (result.status === 200) {
       d1Data.value = result.data
