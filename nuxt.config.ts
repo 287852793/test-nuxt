@@ -8,5 +8,10 @@ export default defineNuxtConfig({
         }
       }
     }
+  },
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.WORKER_BASE_URL
+    }
   }
 })

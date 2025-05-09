@@ -23,9 +23,33 @@ const fetchData = async () => {
   }
 }
 
-// 页面加载时获取数据
+// 定义 D1 数据的响应式数据
+const d1Data = ref([])
+const d1Error = ref(null)
+const d1Loading = ref(false)
+
+// 获取 D1 数据的函数
+const fetchD1Data = async () => {
+  d1Loading.value = true
+  try {
+    const response = await fetch('/api/d1-test')
+    const result = await response.json()
+    if (result.status === 200) {
+      d1Data.value = result.data
+    } else {
+      d1Error.value = result.error || '获取D1数据失败'
+    }
+  } catch (e) {
+    d1Error.value = '请求失败'
+  } finally {
+    d1Loading.value = false
+  }
+}
+
+// 页面加载时获取两个数据源的数据
 onMounted(() => {
   fetchData()
+  fetchD1Data()
 })
 </script>
 
@@ -34,14 +58,14 @@ onMounted(() => {
     <h1>Welcome to the homepage</h1>
 
     <!-- 加载状态显示 -->
-    <div v-if="loading">正在加载数据...</div>
+    <div v-if="loading">正在加载 NEON 数据...</div>
 
     <!-- 错误信息显示 -->
     <div v-if="error" class="error">{{ error }}</div>
 
     <!-- 数据显示 -->
     <div v-if="data.length > 0" class="data-container">
-      <h2>数据列表</h2>
+      <h2>来自 NEON 的 DEMO 数据列表</h2>
       <table>
         <thead>
           <tr>
@@ -56,6 +80,26 @@ onMounted(() => {
       </table>
     </div>
     <div v-else-if="!loading && !error">暂无数据</div>
+
+    <!-- D1 数据显示 -->
+    <div v-if="d1Loading">正在加载 D1 数据...</div>
+    <div v-if="d1Error" class="error">{{ d1Error }}</div>
+    <div v-if="d1Data.length > 0" class="data-container">
+      <h2>来自 Cloudflare D1 的数据列表</h2>
+      <table>
+        <thead>
+          <tr>
+            <th v-for="(value, key) in d1Data[0]" :key="key">{{ key }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in d1Data" :key="index">
+            <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div v-else-if="!d1Loading && !d1Error">暂无 D1 数据</div>
   </div>
 </template>
 
